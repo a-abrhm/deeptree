@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deeptree"
+version = "0.0.1"
+authors = [
+  { name="Alan Abraham", email="alan.abraham.tm@gmail.com" },
+]
+description = "Decision tree classifier implemented using gini index splitting"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = ["decision tree", "classifier", "CART", "gini index", "continuous features", "discrete features"]
+
+[project.urls]
+"Homepage" = "https://github.com/a-abrhm/deeptree"
+"Bug Tracker" = "https://github.com/a-abrhm/deeptree/issues"
