@@ -6,8 +6,8 @@ from itertools import combinations
 
 class Node:
     # class that defines the node of a decision tree
-    def __init__(self, dataset=[], label_index = -1,feature = 0, threshold = None, gini = float('inf'), left = None, right = None) -> None:
-        
+    def __init__(self, dataset=[], label_index=-1, feature=0, threshold=None, gini=float('inf'), left=None, right=None) -> None:
+
         self.data = dataset  # dataset
         # the dataset is a list of data points each of which can have one or more
         # features (continuous or discrete) and the last value will be the label
@@ -36,13 +36,13 @@ class Node:
         self.threshold = threshold  # value of the feature using which the split is done
         # for continuous features threshold will be numeric values, where as
         # for discrete features it will be a splitting subset of values
-        
+
         self.gini = gini  # gini index / impurity for the split at this node
         self.left = left  # left node of the tree
         self.right = right  # right node of the tree
 
-
     # function to extract the i-th feature across all data points
+
     def _getIthFeatures(self, i=0):
         return [item[i] for item in self.data]
 
@@ -69,8 +69,8 @@ class Node:
 
         return subsets
 
-
     # function that returns the gini value of a decision tree node
+
     def getGiniValue(self):
         # function that calculates the sum of squared probabilities of each label in the node
         def sumOfSquaresOfProbabilities(n=0):
@@ -81,14 +81,13 @@ class Node:
         return 1 - sumOfSquaresOfProbabilities(len(self.labels))
 
 
-
 class Classifier:
     # class that defines a decision tree classifier and its methods
 
-    def __init__(self,max_depth=None, min_samples_split=2, min_samples_leaf=1, max_features=None) -> None:  # constructor        
+    def __init__(self, max_depth=None, min_samples_split=2, min_samples_leaf=1, max_features=None) -> None:  # constructor
 
-        self.root = None # root node of decision tree
-        self.depth = 0 # depth of decision tree
+        self.root = None  # root node of decision tree
+        self.depth = 0  # depth of decision tree
 
         # max depth the tree should grow to
         self.max_depth = None
@@ -110,8 +109,8 @@ class Classifier:
         else:
             self.max_features = max_features
 
-
     # function to set the default values to the hyper parameters that depend on the values of other parameters
+
     def _setHyperParameters(self):
         n_samples = self.root.n_samples
         try:
@@ -132,7 +131,8 @@ class Classifier:
 
         try:
             if isinstance(self.max_features, types.FunctionType):
-                self.max_features = self.max_features(len(self.root.data[0]) - 1)
+                self.max_features = self.max_features(
+                    len(self.root.data[0]) - 1)
             else:
                 self.max_features = math.ceil(
                     self.max_features * ((len(self.root.data[0]) - 1) if 0 < self.max_features < 1 else 1))
@@ -140,9 +140,9 @@ class Classifier:
                     raise Exception
         except:
             self.max_features = len(self.root.data[0]) - 1
-    
 
     # function that finds the best split for the node based on the gini partiion value
+
     def _findBestSplit(self, node):
         # if all the items in the node belong to the same label,
         # then it is not possible to split the node
@@ -180,7 +180,8 @@ class Classifier:
                     node1, node2 = Node(d1), Node(d2)
 
                     # calculating the gini partition value for the i-th feature and current split
-                    gini_value = (node1.n_samples / node.n_samples) * node1.getGiniValue() + (node2.n_samples / node.n_samples) * node2.getGiniValue()
+                    gini_value = (node1.n_samples / node.n_samples) * node1.getGiniValue() + (
+                        node2.n_samples / node.n_samples) * node2.getGiniValue()
                     if gini_value < node.gini:  # updating if the new gini value is the least till now
                         node.gini = gini_value
                         node.left, node.right = node1, node2
@@ -212,7 +213,8 @@ class Classifier:
 
                     # calculating the gini partition value for the i-th feature and current midpoint
                     # calculating the gini partition value for the i-th feature and current split
-                    gini_value = (node1.n_samples / node.n_samples) * node1.getGiniValue() + (node2.n_samples / node.n_samples) * node2.getGiniValue()
+                    gini_value = (node1.n_samples / node.n_samples) * node1.getGiniValue() + (
+                        node2.n_samples / node.n_samples) * node2.getGiniValue()
                     if gini_value < node.gini:  # updating if the new gini value is the least till now
                         node.gini = gini_value
                         node.left, node.right = node1, node2
@@ -226,7 +228,7 @@ class Classifier:
         return True
 
     # function that will train the decision tree based on the inputs given
-    def fit(self, dataset = []):
+    def fit(self, dataset=[]):
         # dataset: the training dataset which consists of features and corresponding label
         # dataset is expected to be a list of lists, with each list containing the feature values
         # and the last column being the label/class
@@ -237,15 +239,15 @@ class Classifier:
         # start tree creation
         node = Node(dataset)
         self.root = node
-        self._setHyperParameters() # setting hyper parameters of the decision tree classifier
+        self._setHyperParameters()  # setting hyper parameters of the decision tree classifier
         self._fit(node)
 
     # function that will train the decision tree based on the inputs given
-    def _fit(self, node = None, depth = 0):
+    def _fit(self, node=None, depth=0):
         # node: decision tree node
         # depth: the depth of the current node in the decision tree
 
-        self.depth = depth # storing the max_depth of the tree
+        self.depth = depth  # storing the max_depth of the tree
 
         # continue tree creation if max depth hasn't reached
         if self.max_depth is None or self.max_depth > depth:
@@ -260,8 +262,8 @@ class Classifier:
                         self._fit(node.left, depth+1)
                         self._fit(node.right, depth+1)
 
-
     # function that will predict the class of a single data point
+
     def _predict(self, node, data):
       # data: a list of feature values of the data sample to be classified
         if node.left is None:  # when we reach the leaf node, return the classifier output
@@ -290,16 +292,17 @@ class Classifier:
 
     # function that will print the decision tree structure with
     # details at each level
-    def printTree(self, node = None, level = 0):
+    def printTree(self, node=None, level=0):
         if level == 0:
             node = self.root
-        
+
         if node:
             print("     " * level, f"level = {level}")
             if node.threshold:
-                preposition = 'in' if isinstance(node.threshold, tuple) else '<='
+                preposition = 'in' if isinstance(
+                    node.threshold, tuple) else '<='
                 print("     " * level,
-                    f"feature_{node.feature + 1} {preposition} {node.threshold}")
+                      f"feature_{node.feature + 1} {preposition} {node.threshold}")
                 print("     " * level, f"samples = {node.n_samples}")
                 print("     " * level, f"gini = {node.gini}")
 
@@ -314,4 +317,3 @@ class Classifier:
                 print()
                 print("     " * (level + 1), "right branch")
                 self.printTree(node.right, level + 1)
-        
