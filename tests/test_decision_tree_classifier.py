@@ -1,7 +1,5 @@
 import pytest
-# from deeptree import decision_tree_classifier
-# from deeptree.decision_tree_classifier import Node, Classifier
-from tests import Node, Classifier
+from ..src.deeptree.decision_tree_classifier import Node, Classifier
 
 
 MOCK_DATASET = [[1, 2, 'three', 'label_2'], [4, 5, 'six', 'label_2'], [
@@ -9,7 +7,7 @@ MOCK_DATASET = [[1, 2, 'three', 'label_2'], [4, 5, 'six', 'label_2'], [
 node = Node(MOCK_DATASET)
 
 
-@pytest.mark.parametrize('test_input, expected', [(0, [1, 4, 7, 10]), (-1, ['label_2', 'label_2', 'lable_2', 'lable_1'])])
+@pytest.mark.parametrize('test_input, expected', [(0, [1, 4, 7, 10]), (-1, ['label_2', 'label_2', 'label_2', 'label_1'])])
 def test_getIthFeature(test_input, expected):
     assert node._getIthFeatures(test_input) == expected
 
@@ -19,10 +17,14 @@ def test_getFeatureMidPoints(test_input, expected):
     assert node._getFeatureMidPoints(test_input) == expected
 
 
-@pytest.mark.parametrize('test_input', 'expected', [(2, [('three',), ('six',), ('nine',), ('twelve',), ('three', 'six'),
-                                                         ('three', 'nine'), ('three', 'twelve')])])
-def test_getSplittingSubsets(test_input, expected):
-    assert node._getSplittingSubsets(test_input) == expected
+def test_getSplittingSubsets():
+    output = node._getSplittingSubsets(2)
+    features = sorted(node._getIthFeatures(2))
+    # checking if all individual subsets are present
+    assert sorted([item[0] for item in output[:4]]) == features
+    # checking if all 2 member subsets are there
+    assert sorted(output[4:], key=lambda item: item[1]) == [
+        (output[0][0], feature) for feature in features if feature != output[0][0]]
 
 
 @pytest.mark.parametrize('test_input, expected', [(None, 0.375)])
@@ -35,8 +37,8 @@ def test_findBestSplit():
     # test case for best split is on a discrete feature
     test_input_1 = [[5, 'high', 0], [10, 'medium', 1], [15, 'low', 0], [5, 'high', 1], [10, 'medium', 0], [
         20, 'low', 1], [20, 'high', 0], [35, 'low', 0], [40, 'low', 1], [50, 'high', 0], [50, 'low', 1]]
-    expected_output_1 = (True, 0.4481, [[5, 'high', 0], [5, 'high', 1], [20, 'high', 0], [50, 'high', 0]], [[10, 'medium', 1], [
-                         15, 'low', 0], [10, 'medium', 0], [20, 'low', 1], [35, 'low', 0], [40, 'low', 1], [50, 'low', 1]], ('high',), 1)
+    expected_output_1 = (True, 0.4481, [[5, 'high', 0], [5, 'high', 1], [20, 'high', 0], [50, 'high', 0]], [[10, 'medium', 1], [10, 'medium', 0], [
+                         15, 'low', 0], [20, 'low', 1], [35, 'low', 0], [40, 'low', 1], [50, 'low', 1]], ('high',), 1)
     # test case for best split is on continuous feature
     test_input_2 = [[5, 'high', 0], [10, 'medium', 1], [15, 'low', 0], [5, 'high', 1], [10, 'medium', 0], [
         20, 'low', 1], [20, 'high', 0], [35, 'low', 0], [40, 'low', 1], [50, 'low', 0], [50, 'low', 1]]
@@ -57,10 +59,12 @@ def test_findBestSplit():
     for i in range(5):
         node = Node(tests[i])
         dt = Classifier()
+        dt.root = node
         dt._setHyperParameters()
         output = dt._findBestSplit(node)
         left, right = node.left, node.right
         if i <= 1:
-            left, right = left.data, right.data
-        assert (output, node.gini, node.left.data, node.right.data,
+            left, right = sorted(node.left.data, key=lambda item: item[0]), sorted(
+                node.right.data, key=lambda item: item[0])
+        assert (output, node.gini, left, right,
                 node.threshold, node.feature) == results[i]
