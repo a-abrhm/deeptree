@@ -1,5 +1,7 @@
 import pytest
-from ..src.deeptree.decision_tree_classifier import Node, Classifier
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src', 'deeptree'))
+from deeptree.decision_tree_classifier import Node, Classifier 
 
 
 MOCK_DATASET = [[1, 2, 'three', 'label_2'], [4, 5, 'six', 'label_2'], [

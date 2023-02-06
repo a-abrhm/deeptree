@@ -17,9 +17,8 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-keywords = ["decision tree", "classifier", "CART", "gini index", "continuous features", "discrete features"]
+keywords = ["decision tree", "classifier", "CART", "gini index", "continuous features", "discrete features", "no dependencies"]
 
-dependencies = ["math", "random", "types", "itertools"]
 
 [project.urls]
 "Homepage" = "https://github.com/a-abrhm/deeptree"
