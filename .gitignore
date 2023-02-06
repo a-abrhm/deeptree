@@ -29,3 +29,6 @@ MANIFEST
 
 # virtual env
 dev-env/
+
+# ide files
+.vscode/
