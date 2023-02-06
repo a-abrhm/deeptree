@@ -454,7 +454,9 @@ class Classifier:
             node from the root node.
         """
 
-        self.depth = depth  # storing the max_depth of the tree
+        # updating the max_depth of the tree
+        if depth > self.depth:
+            self.depth = depth
 
         # continue tree creation if max depth hasn't reached
         if self.max_depth is None or self.max_depth > depth:
